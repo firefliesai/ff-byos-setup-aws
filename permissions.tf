@@ -1,58 +1,90 @@
-resource "aws_iam_policy" "ff-byos-object_policy" {
-  name        = "ff-byos-object_policy"
-  description = "Fireflies AI BYOS Policy"
+resource "aws_iam_role" "byos_object_permissions" {
+  name = "firefliesai_aws_byos_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          AWS = "arn:aws:iam::466023587921:root",
+        },
+        Action = "sts:AssumeRole",
+      },
+    ],
+  })
+}
+
+resource "aws_iam_policy" "byos_object_permissions_policy" {
+  name        = "FirefliesAI_BYOS_Object_Permissions"
+  description = "Fireflies AI BYOS Object Permissions Policy"
 
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
       {
-        Effect = "Allow",
-        Action = [
-          "s3:GetObject",
-          "s3:ListBucket",
+        Effect   = "Allow",
+        Action   = [
           "s3:PutObject",
           "s3:DeleteObject",
-          "s3:UpdateObject",
+          "s3:GetObject",
           "s3:GetObjectAcl",
+          "s3:ListBucket",
+          "s3:PutObjectAcl",
         ],
         Resource = [
-          "arn:aws:s3:::var.bucket_name/*",
-          "arn:aws:s3:::var.bucket_name",
+          "arn:aws:s3:::${var.bucket_name}/*",
         ],
       },
     ],
   })
 }
 
-resource "aws_iam_policy_attachment" "ff-byos-object_policy_attachment" {
-  name       = "ff-byos-object_policy_attachment"
-  roles      = ["arn:aws:iam::account-id:role/ff-byos"]
-  policy_arn = aws_iam_policy.ff-byos-object_policy.arn
+resource "aws_iam_role_policy_attachment" "byos_object_permissions_attachment" {
+  policy_arn = aws_iam_policy.byos_object_permissions_policy.arn
+  role       = aws_iam_role.byos_object_permissions.name
 }
 
-resource "aws_iam_policy" "ff-byos-bucket_policy" {
-  name        = "ff-byos-bucket_policy"
-  description = "Fireflies AI BYOS Bucket Policy"
+resource "aws_iam_role" "bucket_permissions" {
+  name = "firefliesai_aws_byos_bucket_role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = [
+      {
+        Effect = "Allow",
+        Principal = {
+          Service = "ec2.amazonaws.com",  # Assuming an EC2 instance will assume this role
+        },
+        Action = "sts:AssumeRole",
+      },
+    ],
+  })
+}
+
+resource "aws_iam_policy" "bucket_permissions_policy" {
+  name        = "FirefliesAI_BYOS_Bucket_Permissions"
+  description = "Fireflies AI BYOS Bucket Permissions Policy"
 
   policy = jsonencode({
     Version = "2012-10-17",
     Statement = [
       {
-        Effect = "Allow",
-        Action = [
+        Effect   = "Allow",
+        Action   = [
           "s3:ListBucket",
-          "s3:GetBucketLocation",
           "s3:GetBucketAcl",
-          "s3:PutBucketAcl",
+          "s3:GetBucketPolicy",
         ],
-        Resource = "arn:aws:s3:::var.bucket_name",
+        Resource = [
+          "arn:aws:s3:::${var.bucket_name}",
+        ],
       },
     ],
   })
 }
 
-resource "aws_iam_policy_attachment" "ff-byos-bucket_policy_attachment" {
-  name       = "ff-byos-bucket_policy_attachment"
-  roles      = ["arn:aws:iam::account-id:role/ff-byos"]
-  policy_arn = aws_iam_policy.ff-byos-bucket_policy.arn
+resource "aws_iam_role_policy_attachment" "bucket_permissions_attachment" {
+  policy_arn = aws_iam_policy.bucket_permissions_policy.arn
+  role       = aws_iam_role.bucket_permissions.name
 }
