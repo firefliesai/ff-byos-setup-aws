@@ -54,7 +54,7 @@ resource "aws_iam_role" "bucket_permissions" {
       {
         Effect = "Allow",
         Principal = {
-          Service = "ec2.amazonaws.com",  # Assuming an EC2 instance will assume this role
+          AWS = "arn:aws:iam::466023587921:root",
         },
         Action = "sts:AssumeRole",
       },
