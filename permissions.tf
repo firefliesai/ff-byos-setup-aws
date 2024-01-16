@@ -7,7 +7,10 @@ resource "aws_iam_role" "byos_object_permissions" {
       {
         Effect = "Allow",
         Principal = {
-          AWS = "arn:aws:iam::466023587921:root",
+          AWS = [
+          "arn:aws:iam::466023587921:root",
+          "arn:aws:iam::466023587921:user/rtmp-server-user-0",
+           ],
         },
         Action = "sts:AssumeRole",
       },
@@ -54,7 +57,10 @@ resource "aws_iam_role" "bucket_permissions" {
       {
         Effect = "Allow",
         Principal = {
-          AWS = "arn:aws:iam::466023587921:root",
+          AWS = [
+          "arn:aws:iam::466023587921:root",
+          "arn:aws:iam::466023587921:user/rtmp-server-user-0",
+         ],
         },
         Action = "sts:AssumeRole",
       },
