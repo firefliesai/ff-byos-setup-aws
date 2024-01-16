@@ -94,3 +94,7 @@ resource "aws_iam_role_policy_attachment" "bucket_permissions_attachment" {
   policy_arn = aws_iam_policy.bucket_permissions_policy.arn
   role       = aws_iam_role.bucket_permissions.name
 }
+
+output "role_arn" {
+  value = aws_iam_role.byos_object_permissions.arn
+}
