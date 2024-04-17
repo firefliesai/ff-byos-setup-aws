@@ -4,6 +4,7 @@
 
 resource "aws_s3_bucket" "fireflies-ai-aws-byos-bucket" {
   bucket = var.bucket_name
+  # region = "us-east-2" # Set bucket specific region here or it will inherit the region from main.tf
 }
 
 resource "aws_s3_bucket_cors_configuration" "fireflies-ai-aws-byos-bucket" {
