@@ -31,6 +31,7 @@ At the time of writing, customers are required to set the following variables in
 - `bucket.tf` : The bucket configuration. This is intentionally left vague to let customers decide their settings  
 - `main.tf` : The entrypoint for AWS Cloud Configuration. However, the configuration is controlled by variables  
 - `permissions.tf` : The file that defines permissions need for the operation  
+- `search.tf` : The bucket policy that lets Fireflies search index your meetings inside your bucket (see below)  
 - `terraform.tfvars` : All the variables required for the configuration to work. Customers are encouraged to change the necessary environment variables in this file to their project specific ones  
 
 
@@ -55,4 +56,15 @@ s3:GetBucketPolicy
 These permissions are not wildcard permissions and are bound to the bucket specified by the customer.  This is defined in the condition section of the permissions.tf file
 
 
+# Search index in your bucket
 
+Fireflies keeps the search index for your workspace in your bucket, under the `tpuf/` prefix. The index is stored by Turbopuffer, our search provider, whose AWS role reads and writes it. `search.tf` adds a bucket policy that grants that role these permissions, limited to `tpuf/`:
+
+```
+s3:ListBucket   (keys under tpuf/ only)
+s3:GetObject    (tpuf/*)
+s3:PutObject    (tpuf/*)
+s3:DeleteObject (tpuf/*)
+```
+
+`aws_s3_bucket_policy` replaces the whole bucket policy. If your bucket already has one, add these two statements to it instead of applying `search.tf` as is. If the bucket is encrypted with a customer-managed KMS key, the same role also needs `kms:Encrypt`, `kms:Decrypt` and `kms:GenerateDataKey` on that key.
