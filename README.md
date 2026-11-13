@@ -69,4 +69,4 @@ s3:DeleteObject (tpuf/*)
 
 The index is stored in your bucket, but Turbopuffer serves it from AWS `us-east-1`. With a bucket in another region, index data is read into `us-east-1` and you pay cross-region transfer for it.
 
-`aws_s3_bucket_policy` replaces the whole bucket policy. If your bucket already has one, add these two statements to it instead of applying `search.tf` as is. A bucket encrypted with a customer-managed KMS key is not supported by this guide yet: the role would need access to that key on both your side and Turbopuffer's. Talk to the Fireflies team before using one.
+`aws_s3_bucket_policy` replaces the whole bucket policy. If your bucket already has one, add all four statements from `search.tf` to it, including the two denies, instead of applying `search.tf` as is. A bucket encrypted with a customer-managed KMS key is not supported by this guide yet: the role would need access to that key on both your side and Turbopuffer's. Talk to the Fireflies team before using one.
